@@ -53,6 +53,7 @@ type overview struct {
 	ExecutionTime string
 	Timestamp     string
 	Summary       *summary
+	ExecutionStatus status
 	BasePath      string
 }
 
@@ -267,11 +268,8 @@ func readTemplates(themePath string) {
 		"toOverview":          toOverview,
 		"toPath":              path.Join,
 	}
-	f, err := ioutil.ReadFile(filepath.Join(getAbsThemePath(themePath), "views", "partials.tmpl"))
-	if err != nil {
-		log.Fatalf(err.Error())
-	}
-	parsedTemplates, err = template.New("Reports").Funcs(funcs).Parse(string(f))
+	var err error
+	parsedTemplates, err = template.New("Reports").Funcs(funcs).ParseGlob(filepath.Join(getAbsThemePath(themePath), "views", "/*"))
 	if err != nil {
 		log.Fatalf(err.Error())
 	}

@@ -1,0 +1,40 @@
+/* Container to display errors in Execution hooks. Execution hooks can be at Suite/Spec or Scenario level */
+{{define "hookFailureDiv"}}
+  <div class="error-container failed{{if gt .TableRowIndex 0}} hidden{{end}}"{{if ne .TableRowIndex -1}} data-tablerow='{{.TableRowIndex}}'{{end}}>
+    <div class="error-heading">{{.HookName}} Failed:<span class="error-message"> {{.ErrMsg | escapeHTML | encodeNewLine}}</span></div>
+    <div class="toggle-show">
+      [Show details]
+    </div>
+    <div class="exception-container hidden">
+        <div class="exception">
+          <pre class="stacktrace">{{.StackTrace | escapeHTML | encodeNewLine}}</pre>
+        </div>
+        {{if .Screenshot}}
+          <div class="screenshot-container">
+            <a href="data:image/png;base64,{{.Screenshot}}" rel="lightbox">
+              <img src="data:image/png;base64,{{.Screenshot}}" class="screenshot-thumbnail" />
+            </a>
+          </div>
+        {{end}}
+    </div>
+  </div>
+{{end}}
+
+/* Holds the failures in a Step. Includes Stacktrace and Screenshot */
+{{define "stepFailureDiv"}}
+  <div class="error-container failed">
+    <div class="exception-container">
+        <div class="exception">
+          <h4 class="error-message">
+            <pre>{{.ErrorMessage | escapeHTML | encodeNewLine}}</pre>
+          </h4>
+          <pre class="stacktrace">{{.StackTrace | escapeHTML | encodeNewLine}}</pre>
+        </div>
+        {{if .Screenshot}}<div class="screenshot-container">
+          <a href="data:image/png;base64,{{.Screenshot}}" rel="lightbox">
+            <img src="data:image/png;base64,{{.Screenshot}}" class="screenshot-thumbnail" />
+          </a>
+        </div>{{end}}
+    </div>
+  </div>
+{{end}}

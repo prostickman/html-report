@@ -1,0 +1,98 @@
+{{define "spec_details"}}
+  <div id="specItemsContainer">
+    {{if containsParseErrors .Errors}}
+  		{{template "specErrorDiv" .}}
+  		</div>
+  	{{else}}
+      {{range $index, $beforeHook := .BeforeSpecHookFailures}}
+        {{template "hookFailureDiv" $beforeHook}}
+      {{end}}
+      <div class="content"><span></span>
+        {{template "specCommentsAndTableTag" .}}
+        {{range $index, $scn := .Scenarios}}
+          {{template "scenario" $scn}}
+        {{end}}
+      </div>
+      {{range $index, $afterHook := .AfterSpecHookFailures}}
+        {{template "hookFailureDiv" $afterHook}}
+      {{end}}
+    {{end}}
+  </div>
+{{end}}
+
+{{define "tagsDiv"}}
+  {{if .Tags}}
+    <div class="tags scenario_tags contentSection">
+      <strong>Tags:</strong>
+      {{range .Tags}}
+        <span> {{. | escapeHTML }}</span>
+      {{end}}
+    </div>
+  {{end}}
+{{end}}
+
+{{define "scenarioHead"}}
+    <div class="scenario-head">
+      <h3 class="head borderBottom">{{.Heading | escapeHTML }}</h3>
+      <span class="time">{{.ExecutionTime}}</span>
+      {{template "tagsDiv" .}}
+    </div>
+    <span></span>
+{{end}}
+
+{{define "item"}}
+  {{if eq .Kind "step"}}
+    {{template "step" .Step}}
+  {{else if eq .Kind "comment"}}
+    <span>{{.Comment.Text | parseMarkdown | sanitize}}</span>
+  {{else if eq .Kind "concept"}}
+    {{template "concept" .Concept}}
+  {{end}} 
+{{end}}
+
+
+{{define "scenario"}}
+  <div class="scenario-container passed">
+    {{template "scenarioHead" .}}
+    {{range $i, $c := .Contexts}}
+      <div class='context-step'>
+        {{template "item" $c}}
+      </div>
+    {{end}}
+    {{range $i, $item := .Items}}
+      {{template "item" $item}}
+    {{end}}
+    {{range $i, $t := .Teardowns}}
+      <div class='context-step'>
+        {{template "item" $t}}
+      </div>
+    {{end}}
+  </div>
+{{end}}
+
+{{define "specCommentsAndTableTag"}}
+  {{range .CommentsBeforeDatatable}}
+  <span>{{. | parseMarkdown | sanitize}}</span>
+  {{end}}
+  {{if .Datatable}}
+    <table class="data-table">
+      <tr>
+        {{range .Datatable.Headers}}<th>{{. | escapeHTML }}</th>{{end}}
+      </tr>
+      <tbody data-rowCount={{len .Datatable.Rows}}>
+        {{range $index, $row := .Datatable.Rows}}
+          {{if eq $row.Result "pass"}}<tr class='row-selector passed{{if eq $index 0}} selected{{end}}' data-rowIndex='{{$index}}'>
+          {{else if eq $row.Result "fail"}}<tr class='row-selector failed{{if eq $index 0}} selected{{end}}' data-rowIndex='{{$index}}'>
+          {{else}}<tr class='row-selector skipped{{if eq $index 0}} selected{{end}}' data-rowIndex='{{$index}}'>
+          {{end}}
+            {{range $row.Cells}}<td>{{. | escapeHTML }}</td>{{end}}
+        </tr>
+        {{end}}
+      </tbody>
+    </table>
+  {{end}}
+
+  {{range .CommentsAfterDatatable}}
+    <span>{{. | parseMarkdown | sanitize}}</span>
+  {{end}}
+{{end}}

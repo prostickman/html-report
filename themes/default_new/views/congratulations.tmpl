@@ -1,0 +1,7 @@
+{{define "congratulations"}}
+    {{if ne .ExecutionStatus "fail" }}
+        <div class="congratulations details">
+          <p>Congratulations! You've gone all <span class="green">green</span> and saved the environment!</p>
+        </div>
+    {{end}}
+{{end}}

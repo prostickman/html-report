@@ -130,6 +130,7 @@ func toOverview(res *SuiteResult, filePath string) *overview {
 		ExecutionTime: formatTime(res.ExecutionTime),
 		Timestamp:     res.Timestamp,
 		Summary:       &summary{Failed: res.FailedSpecsCount, Total: totalSpecs, Passed: res.PassedSpecsCount, Skipped: res.SkippedSpecsCount},
+		ExecutionStatus: res.ExecutionStatus,
 		BasePath:      base,
 	}
 }
