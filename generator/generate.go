@@ -77,6 +77,7 @@ type specHeader struct {
 	FileName      string
 	Tags          []string
 	Summary       *summary
+	DirList       []string
 }
 
 type errorType string
@@ -267,6 +268,7 @@ func readTemplates(themePath string) {
 		"toSidebar":           toSidebar,
 		"toOverview":          toOverview,
 		"toPath":              path.Join,
+		"getDirName":          filepath.Base,
 	}
 	var err error
 	parsedTemplates, err = template.New("Reports").Funcs(funcs).ParseGlob(filepath.Join(getAbsThemePath(themePath), "views", "/*"))
@@ -301,7 +303,7 @@ func GenerateReports(res *SuiteResult, reportsDir, themePath string) error {
 	}
 	defer f.Close()
 	if res.BeforeSuiteHookFailure != nil {
-		execTemplate("indexPageFailure", f, res)
+		execTemplate("indexPage", f, res)
 	} else {
 		var wg sync.WaitGroup
 		wg.Add(1)

@@ -27,6 +27,8 @@ import (
 	"path"
 
 	gm "github.com/getgauge/html-report/gauge_messages"
+	"log"
+	"fmt"
 )
 
 const (
@@ -107,6 +109,35 @@ func getNestedSpecResults(specResults []*spec, basePath string) []*spec {
 		}
 	}
 	return nestedSpecResults
+}
+
+func getRelPathDirs(fileName string) []string {
+	relPath, err := filepath.Rel(projectRoot, fileName)
+	if err != nil {
+		log.Fatalf(err.Error())
+	}
+	dirs := make([]string, 0)
+	dirs = getPaths(relPath, dirs)
+	relToProjectRoot, err := filepath.Rel(filepath.Dir(fileName), projectRoot)
+	if err != nil {
+		log.Fatalf(err.Error())
+	}
+	for key, value := range dirs {
+		dirs[key] = filepath.Join(relToProjectRoot, value)
+	}
+	return dirs
+}
+
+func getPaths(dirPath string, dirs []string) []string {
+	if dirPath == "." {
+		return dirs
+	}
+	relDir := filepath.Dir(dirPath)
+	if relDir == "." {
+		return dirs
+	}
+	dirs = append([]string{relDir}, dirs...)
+	return getPaths(relDir, dirs)
 }
 
 func toOverview(res *SuiteResult, filePath string) *overview {
@@ -252,6 +283,7 @@ func toSpecHeader(res *spec) *specHeader {
 		FileName:      res.FileName,
 		Tags:          res.Tags,
 		Summary:       toScenarioSummary(res),
+		DirList:       getRelPathDirs(res.FileName),
 	}
 }
 
