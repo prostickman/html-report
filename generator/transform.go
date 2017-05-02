@@ -28,7 +28,6 @@ import (
 
 	gm "github.com/getgauge/html-report/gauge_messages"
 	"log"
-	"fmt"
 )
 
 const (
@@ -344,26 +343,12 @@ func toSpec(res *gm.ProtoSpecResult) *spec {
 	if res.GetProtoSpec().GetIsTableDriven() {
 		computeTableDrivenStatuses(spec)
 	}
-	p, f, s := computeScenarioStatistics(spec)
-	spec.PassedScenarioCount = p
-	spec.FailedScenarioCount = f
-	spec.SkippedScenarioCount = s
+	spec.ScenarioCount = int(res.GetScenarioCount())
+	spec.PassedScenarioCount = int(res.GetScenarioCount() - res.GetScenarioFailedCount() - res.GetScenarioSkippedCount())
+	spec.FailedScenarioCount = int(res.GetScenarioFailedCount())
+	spec.SkippedScenarioCount = int(res.GetScenarioSkippedCount())
 	sort.Sort(bySceStatus(spec.Scenarios))
 	return spec
-}
-
-func computeScenarioStatistics(s *spec) (passed, failed, skipped int) {
-	for _, scn := range s.Scenarios {
-		switch scn.ExecutionStatus {
-		case pass:
-			passed++
-		case fail:
-			failed++
-		case skip:
-			skipped++
-		}
-	}
-	return passed, failed, skipped
 }
 
 func toErrors(errors []*gm.Error) []buildError {
@@ -416,8 +401,7 @@ func SetRowFailures(failures []*hookFailure, spec *spec) {
 }
 
 func toScenarioSummary(s *spec) *summary {
-	var sum = summary{Failed: s.FailedScenarioCount, Passed: s.PassedScenarioCount, Skipped: s.SkippedScenarioCount}
-	sum.Total = sum.Failed + sum.Passed + sum.Skipped
+	var sum = summary{Failed: s.FailedScenarioCount, Passed: s.PassedScenarioCount, Skipped: s.SkippedScenarioCount, Total:s.ScenarioCount}
 	return &sum
 }
 

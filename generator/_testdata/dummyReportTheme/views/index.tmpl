@@ -1,0 +1,20 @@
+{{define "indexPage"}}
+  {{$overview := (toOverview . "")}}
+  <!doctype html>
+  <html>
+    {{template "head" $overview}}
+    <body>
+      {{template "header" $overview}}
+      {{if .BeforeSuiteHookFailure}} 
+        {{template "hookFailureDiv" .BeforeSuiteHookFailure}}
+      {{else}}
+        {{template "report"  $overview}}
+        {{template "sidebar" (toSidebar . "")}}
+      {{end}}
+      {{if .AfterSuiteHookFailure}}
+        {{template "hookFailureDiv" .AfterSuiteHookFailure}}
+      {{end}}
+      {{template "footerAndJS" $overview}}
+    </body>
+  </html>
+{{end}}

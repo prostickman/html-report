@@ -1,0 +1,23 @@
+{{define "report"}}
+  <main class="report">
+    {{if ne .ExecutionStatus "fail" }}
+      <div class="congratulations details">
+        <p>Congratulations! You've gone all <span class="green">green</span> and saved the environment!</p>
+      </div>
+    {{end}}
+    <div class="report-overview">
+      <h3>Report Overview</h3>
+      <div class='box-container'>
+        <div class='report-results box'>
+          {{ template "pie_chart" . }}
+            <div class="report_test-results ">
+              {{ template "test_results_summary" . }}
+            </div>
+        </div>
+        <div class="report_details box">
+          {{ template "report_details" .}}
+        </div>
+      </div>
+    </div>
+  </main>
+{{end}}

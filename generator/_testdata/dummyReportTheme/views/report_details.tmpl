@@ -1,0 +1,21 @@
+{{define "report_details"}}
+    <ul>
+      <li>
+        <label>Environment </label>
+        <span>{{.Env}}</span>
+      </li>
+    
+      <li>
+        <label>Success Rate </label>
+        <span>{{.SuccessRate}}%</span>
+      </li>
+      <li>
+        <label>Total Time </label>
+        <span>{{.ExecutionTime}}</span>
+      </li>
+      <li>
+        <label>Generated On </label>
+        <span>{{.Timestamp}}</span>
+      </li>
+    </ul>
+{{end}}

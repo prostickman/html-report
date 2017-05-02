@@ -1,0 +1,13 @@
+{{define "specPage"}}
+  {{$overview := (toOverview .SuiteRes .SpecRes.FileName)}}
+  <!doctype html>
+  <html>
+    {{template "head" $overview}}
+    <body>
+      {{template "header" $overview}}
+      {{template "spec" .}}
+      {{template "sidebar" (toSidebar .SuiteRes .SpecRes.FileName)}}
+      {{template "footerAndJS" $overview}}
+    </body>
+  </html>
+{{end}}

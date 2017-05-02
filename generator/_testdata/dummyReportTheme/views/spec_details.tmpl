@@ -1,0 +1,48 @@
+{{define "spec_details"}}
+  <div id="specItemsContainer">
+    {{if containsParseErrors .Errors}}
+  		{{template "specErrorDiv" .}}
+  		</div>
+  	{{else}}
+      {{range $index, $beforeHook := .BeforeSpecHookFailures}}
+        {{template "hookFailureDiv" $beforeHook}}
+      {{end}}
+      <div class="content"><span></span>
+        {{template "specCommentsAndTableTag" .}}
+        {{range $index, $scn := .Scenarios}}
+          {{template "scenario" $scn}}
+        {{end}}
+      </div>
+      {{range $index, $afterHook := .AfterSpecHookFailures}}
+        {{template "hookFailureDiv" $afterHook}}
+      {{end}}
+    {{end}}
+  </div>
+{{end}}
+
+{{define "specCommentsAndTableTag"}}
+  {{range .CommentsBeforeDatatable}}
+  <span>{{. | parseMarkdown | sanitize}}</span>
+  {{end}}
+  {{if .Datatable}}
+    <table class="data-table">
+      <tr>
+        {{range .Datatable.Headers}}<th>{{. | escapeHTML }}</th>{{end}}
+      </tr>
+      <tbody data-rowCount={{len .Datatable.Rows}}>
+        {{range $index, $row := .Datatable.Rows}}
+          {{if eq $row.Result "pass"}}<tr class='row-selector passed{{if eq $index 0}} selected{{end}}' data-rowIndex='{{$index}}'>
+          {{else if eq $row.Result "fail"}}<tr class='row-selector failed{{if eq $index 0}} selected{{end}}' data-rowIndex='{{$index}}'>
+          {{else}}<tr class='row-selector skipped{{if eq $index 0}} selected{{end}}' data-rowIndex='{{$index}}'>
+          {{end}}
+            {{range $row.Cells}}<td>{{. | escapeHTML }}</td>{{end}}
+        </tr>
+        {{end}}
+      </tbody>
+    </table>
+  {{end}}
+
+  {{range .CommentsAfterDatatable}}
+    <span>{{. | parseMarkdown | sanitize}}</span>
+  {{end}}
+{{end}}

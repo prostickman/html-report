@@ -1,0 +1,42 @@
+{{define "specheader"}}
+  <header class="curr-spec">
+    <div class="spec-head-wrapper">
+      <ul class="crumbs">
+        {{range .DirList}}
+          <li><a href="{{(toPath . "index.html")}}">{{(getDirName .)}}</a> ></li>
+        {{end}}
+        <li>{{.SpecName}}</li>
+      </ul>
+      <h3 class="spec-head" title="{{.FileName}}">{{.SpecName | escapeHTML }}</h3>
+      <div class="row">
+        <span class="specTime">{{.ExecutionTime}}</span>
+        <div class="spec_test_results" alt="Scenarios" title="Scenarios">
+          <ul>
+            <li class="all">
+              <label>All</label>
+              <span class="value redtxt">{{.Summary.Total}}</span>
+            </li>
+            <li class="fail">
+              <label>Failed</label>
+              <span class="value redtxt">{{.Summary.Failed}}</span>
+            </li>
+            <li class="pass">
+              <label>Passed</label>
+              <span class="value greentxt">{{.Summary.Passed}}</span>
+            </li>
+            <li class="skip">
+              <label>Skipped</label>
+              <span class="value greytxt">{{.Summary.Passed}}</span>
+            </li>
+            <li class="spec-meta">
+                <input id="specFileName" value="{{.FileName}}" readonly="">
+                <button class="clipboard-btn" data-clipboard-target="#specFileName" title="Copy to Clipboard">
+                    <i class="fa fa-clipboard" aria-hidden="true" title="Copy to Clipboard"></i>
+                </button>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </header>
+{{end}}

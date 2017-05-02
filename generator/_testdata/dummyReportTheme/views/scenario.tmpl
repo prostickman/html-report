@@ -1,0 +1,56 @@
+{{define "scenario"}}
+  <div class='scenario-container {{if eq .ExecutionStatus "pass"}}passed{{if gt .TableRowIndex 0}} hidden{{end}}'{{if ne .TableRowIndex -1}} data-tablerow='{{.TableRowIndex}}'{{end}}>
+      {{else if eq .ExecutionStatus "fail"}}failed{{if gt .TableRowIndex 0}} hidden{{end}}'{{if ne .TableRowIndex -1}}  data-tablerow='{{.TableRowIndex}}'{{end}}>
+      {{else}}skipped{{if gt .TableRowIndex 0}} hidden{{end}}'{{if ne .TableRowIndex -1}}  data-tablerow='{{.TableRowIndex}}'{{end}}>{{end}}
+    {{template "scenarioHead" .}}
+    {{if .BeforeScenarioHookFailure}}
+      {{template "hookFailureDiv" .BeforeScenarioHookFailure}}
+    {{end}}
+    {{range $i, $c := .Contexts}}
+      <div class='context-step'>
+        {{template "item" $c}}
+      </div>
+    {{end}}
+    {{range $i, $item := .Items}}
+      {{template "item" $item}}
+    {{end}}
+    {{range $i, $t := .Teardowns}}
+      <div class='context-step'>
+        {{template "item" $t}}
+      </div>
+    {{end}}
+    {{if .AfterScenarioHookFailure }}
+      {{template "hookFailureDiv" .AfterScenarioHookFailure}}
+    {{end}}
+  </div>
+{{end}}
+
+{{define "item"}}
+  {{if eq .Kind "step"}}
+    {{template "step" .Step}}
+  {{else if eq .Kind "comment"}}
+    <span>{{.Comment.Text | parseMarkdown | sanitize}}</span>
+  {{else if eq .Kind "concept"}}
+    {{template "concept" .Concept}}
+  {{end}} 
+{{end}}
+
+{{define "scenarioHead"}}
+    <div class="scenario-head">
+      <h3 class="head borderBottom">{{.Heading | escapeHTML }}</h3>
+      <span class="time">{{.ExecutionTime}}</span>
+      {{template "tagsDiv" .}}
+    </div>
+    <span></span>
+{{end}}
+
+{{define "tagsDiv"}}
+  {{if .Tags}}
+    <div class="tags scenario_tags contentSection">
+      <strong>Tags:</strong>
+      {{range .Tags}}
+        <span> {{. | escapeHTML }}</span>
+      {{end}}
+    </div>
+  {{end}}
+{{end}}

@@ -1,0 +1,17 @@
+{{define "spec"}}
+    <main class="spec">
+      <div id="specificationContainer" class="details">
+        {{template "specheader" (toSpecHeader .SpecRes)}}
+        {{if .SuiteRes.BeforeSuiteHookFailure}}
+          {{template "hookFailureDiv" .SuiteRes.BeforeSuiteHookFailure}}
+        {{end}}
+        
+        {{if .SuiteRes.AfterSuiteHookFailure}}
+          {{template "hookFailureDiv" .SuiteRes.AfterSuiteHookFailure}}
+        {{end}}
+        {{if not .SuiteRes.BeforeSuiteHookFailure }}
+          {{template "spec_details" .SpecRes}}
+        {{end}}
+      </div>
+    </main>
+{{end}}

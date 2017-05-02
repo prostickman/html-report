@@ -268,34 +268,6 @@ var wSkipStepStartDiv = `<div class='step'>
       <li class='step'>
         <div class='step-txt'>`
 
-var wStepEndDiv = `<span>Say</span><span class='parameter'>"hi"</span><span>to</span><span class='parameter'>"gauge"</span>
-          <div class='inline-table'>
-            <div>
-              <table>
-                <tr>
-                  <th>Word</th>
-                  <th>Count</th>
-                </tr>
-                <tbody>
-                  <tr>
-                    <td>Gauge</td>
-                    <td>3</td>
-                  </tr>
-                  <tr>
-                    <td>Mingle</td>
-                    <td>2</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      </li>
-    </ul>
-  </div>
-</div>
-`
-
 var wPassStepBodyDivWithBracketsInFragment = `
 	<span>Say</span>
 	<span class='parameter'>"good &lt;a&gt; morning"</span>
@@ -415,9 +387,9 @@ var skippedStepRes = &result{
 
 var reportGenTests = []reportGenTest{
 	{"generate html page start with project name", "htmlPageStartTag", &overview{ProjectName: "projname"}, whtmlPageStartTag},
-	{"generate report overview with tags", "reportOverviewTag", &overview{"projname", "default", "foo", 34, "00:01:53", "Jun 3, 2016 at 12:29pm", &summary{41, 2, 39, 0}, "/"},
+	{"generate report overview with tags", "reportOverviewTag", &overview{"projname", "default", "foo", 34, "00:01:53", "Jun 3, 2016 at 12:29pm", &summary{41, 2, 39, 0}, fail, "/"},
 		wChartDiv + wResCntDiv + wEnvLi + wTagsLi + wSuccRateLi + wExecTimeLi + wTimestampLi},
-	{"generate report overview without tags", "reportOverviewTag", &overview{"projname", "default", "", 34, "00:01:53", "Jun 3, 2016 at 12:29pm", &summary{41, 2, 39, 0}, "/"},
+	{"generate report overview without tags", "reportOverviewTag", &overview{"projname", "default", "", 34, "00:01:53", "Jun 3, 2016 at 12:29pm", &summary{41, 2, 39, 0}, fail, "/"},
 		wChartDiv + wResCntDiv + wEnvLi + wSuccRateLi + wExecTimeLi + wTimestampLi},
 	{"generate sidebar with appropriate pass/fail/skip class", "sidebarDiv", &sidebar{
 		IsBeforeHookFailure: false,
@@ -432,7 +404,7 @@ var reportGenTests = []reportGenTest{
 	}, ""},
 	{"generate hook failure div with screenshot", "hookFailureDiv", newHookFailure("BeforeSuite", "SomeError", "iVBO", "Stack trace"), wHookFailureWithScreenhotDiv},
 	{"generate hook failure div without screenshot", "hookFailureDiv", newHookFailure("BeforeSuite", "SomeError", "", "Stack trace"), wHookFailureWithoutScreenhotDiv},
-	{"generate spec header with tags", "specHeaderStartTag", &specHeader{"Spec heading", "00:01:01", "/tmp/gauge/specs/foobar.spec", []string{"foo", "bar"}, &summary{0, 0, 0, 0}}, wSpecHeaderStartWithTags},
+	{"generate spec header with tags", "specHeaderStartTag", &specHeader{"Spec heading", "00:01:01", "/tmp/gauge/specs/foobar.spec", []string{"foo", "bar"}, &summary{0, 0, 0, 0}, []string{"../specs"}}, wSpecHeaderStartWithTags},
 	{"generate div for tags", "tagsDiv", &specHeader{Tags: []string{"tag1", "tag2"}}, wTagsDiv},
 	{"generate spec comments with data table (if present)", "specCommentsAndTableTag", newSpec(true), wSpecCommentsWithTableTag},
 	{"generate spec comments without data table", "specCommentsAndTableTag", newSpec(false), wSpecCommentsWithoutTableTag},
@@ -477,16 +449,6 @@ func newHookFailure(name, errMsg, screenshot, stacktrace string) *hookFailure {
 		ErrMsg:     errMsg,
 		Screenshot: screenshot,
 		StackTrace: stacktrace,
-	}
-}
-
-func newOverview() *overview {
-	return &overview{
-		ProjectName:   "gauge-testsss",
-		Env:           "default",
-		SuccessRate:   95,
-		ExecutionTime: "00:01:53",
-		Timestamp:     "Jun 3, 2016 at 12:29pm",
 	}
 }
 

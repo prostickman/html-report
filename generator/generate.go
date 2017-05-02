@@ -110,22 +110,23 @@ type SuiteResult struct {
 }
 
 type spec struct {
-	CommentsBeforeDatatable []string       `json:"CommentsBeforeDatatable"`
-	CommentsAfterDatatable  []string       `json:"CommentsAfterDatatable"`
-	SpecHeading             string         `json:"SpecHeading"`
-	FileName                string         `json:"FileName"`
-	Tags                    []string       `json:"Tags"`
-	ExecutionTime           int64          `json:"ExecutionTime"`
-	ExecutionStatus         status         `json:"ExecutionStatus"`
-	Scenarios               []*scenario    `json:"Scenarios"`
-	IsTableDriven           bool           `json:"IsTableDriven"`
-	Datatable               *table         `json:"Datatable"`
-	BeforeSpecHookFailures  []*hookFailure `json:"BeforeSpecHookFailures"`
-	AfterSpecHookFailures   []*hookFailure `json:"AfterSpecHookFailures"`
-	PassedScenarioCount     int            `json:"PassedScenarioCount"`
-	FailedScenarioCount     int            `json:"FailedScenarioCount"`
-	SkippedScenarioCount    int            `json:"SkippedScenarioCount"`
-	Errors                  []buildError   `json:"Errors"`
+	CommentsBeforeDatatable []string       `json:"commentsBeforeDatatable"`
+	CommentsAfterDatatable  []string       `json:"comentsAfterDatatable"`
+	SpecHeading             string         `json:"specHeading"`
+	FileName                string         `json:"fileName"`
+	Tags                    []string       `json:"tags"`
+	ExecutionTime           int64          `json:"executionTime"`
+	ExecutionStatus         status         `json:"executionStatus"`
+	Scenarios               []*scenario    `json:"scenarios"`
+	IsTableDriven           bool           `json:"isTableDriven"`
+	Datatable               *table         `json:"datatable"`
+	BeforeSpecHookFailures  []*hookFailure `json:"beforeSpecHookFailures"`
+	AfterSpecHookFailures   []*hookFailure `json:"afterSpecHookFailures"`
+	ScenarioCount           int            `json:"ScenarioCount"`
+	PassedScenarioCount     int            `json:"passedScenarioCount"`
+	FailedScenarioCount     int            `json:"failedScenarioCount"`
+	SkippedScenarioCount    int            `json:"skippedScenarioCount"`
+	Errors                  []buildError   `json:"errors"`
 }
 
 type scenario struct {
@@ -271,7 +272,7 @@ func readTemplates(themePath string) {
 		"getDirName":          filepath.Base,
 	}
 	var err error
-	parsedTemplates, err = template.New("Reports").Funcs(funcs).ParseGlob(filepath.Join(getAbsThemePath(themePath), "views", "/*"))
+	parsedTemplates, err = template.New("Reports").Funcs(funcs).ParseGlob(filepath.Join(getAbsThemePath(themePath), "views", "*.tmpl"))
 	if err != nil {
 		log.Fatalf(err.Error())
 	}

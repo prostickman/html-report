@@ -1,0 +1,54 @@
+{{define "sidebar"}}
+    {{if not .IsBeforeHookFailure}}
+        <aside class="sidebar">
+        <div class='filtersSearch'>
+          <div class="searchFilterContainer">
+              <div class="searchInWrapper">
+                <span>Search in : </span>
+                <label><input type="checkbox">Global</label>
+              </div>
+              <button class='searchFilterBtn modal-link' id="searchfilter" >Filter</button>
+              <div class="modal">
+                  <span class="close">X</span>
+                  <div class="modal-notitle"></div>
+                  <div class="modal-content">
+                    <div id="tree1"></div>
+                      <div id="jstree_demo_div"></div>
+                  </div>
+              </div>
+          </div>
+          <div class="searchbar">
+            <input id="searchSpecifications" placeholder="Type specification or tag name" type="text" />
+            <i class="fa fa-search"></i>
+          </div>
+        
+        
+          <div class="filter">
+            <button class='allBG total-specs' data-status="all">All</button>
+            <button class='failedBG spec-filter' data-status="failed">Failed</button>
+            <button class='passedBG spec-filter' data-status="passed">Passed</button>
+            <button class='skippedBG spec-filter' data-status="skipped">Skipped</button>
+          </div>
+        </div>
+        
+          <div id="listOfSpecifications">
+            <ul id="scenarios" class="spec-list">
+              {{range $index, $specMeta := .Specs}}
+                {{if $specMeta.Failed}}
+                  <li class='failed spec-name'>
+                {{else if $specMeta.Skipped}}
+                  <li class='skipped spec-name'>
+                {{else}}
+                  <li class='passed spec-name'>
+                {{end}}
+                    <a href="{{.ReportFile}}">
+                      <span id="scenarioName" class="scenarioname">{{$specMeta.SpecName | escapeHTML }}</span>
+                      <span id="time" class="time">{{$specMeta.ExecutionTime}}</span>
+                    </a>
+                  </li>           
+              {{end}}
+            </ul>
+          </div>
+        </aside>
+    {{end}}
+{{end}}

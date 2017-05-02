@@ -1,0 +1,128 @@
+{{define "step"}}
+  <div class="step">
+  {{template "stepMetaDiv" .}}
+  {{template "stepBodyDiv" .}}
+  {{if .BeforeStepHookFailure}}
+    {{ template "hookFailureDiv" .BeforeStepHookFailure }}
+  {{end}}
+  {{with .Result}}
+    {{if and (and (eq .Status "fail") (ne .ErrorMessage "")) (ne .StackTrace "") }}
+      {{template "stepFailureDiv" .}}
+    {{end }}
+  {{end}}
+  {{if .AfterStepHookFailure}}
+    {{ template "hookFailureDiv" .AfterStepHookFailure }}
+  {{end}}
+  {{template "messageDiv" .Result}}
+  </li></ul></div></div>
+  {{with .Result}}
+    {{if (and (eq .Status "skip") (ne .SkippedReason "")) }}
+      <div class="message-container">
+        <h4 class="skipReason">Skipped Reason: {{.SkippedReason | escapeHTML }}</h4>
+      </div>
+    {{end }}
+  {{end}}
+{{end}}
+
+/* Prints out the messages that the user may have introduces using teh Gauge.WriteMessage API */
+{{define "messageDiv"}}
+  {{if .Messages}}
+    <div class="message-container">
+      <i class="fa fa-minus-square" aria-hidden="true"></i>
+      <div class="messages">
+        {{range .Messages}}<div class="step-message">{{. | encodeNewLine | parseMarkdown | sanitize}} </div>{{end}}
+      </div>
+    </div>
+  {{end}}
+{{end}}
+
+/* Meta information about Step/Concept. Contains ExecutionTime and Status */
+{{define "stepMetaDiv"}}
+  {{if ne .Result.Status "skip"}}
+    <h5 class="execution-time">
+      <span class="time">Execution Time : {{.Result.ExecutionTime}}</span>
+    </h5>
+  {{end}}
+  {{if eq .Result.Status "pass"}}
+    <div class="step-info passed">
+  {{else if eq .Result.Status "fail"}}
+    <div class='step-info failed'>
+  {{else if eq .Result.Status "skip"}}
+    <div class='step-info skipped'>
+  {{else if eq .Result.Status "not executed"}}
+    <div class='step-info not-executed'>
+  {{end}}
+    <ul>
+      <li class='step'>
+        <div class='step-txt'>
+{{end}}
+
+{{define "stepBodyDiv"}}
+  {{range .Fragments}}
+    {{if eq .FragmentKind 0}}
+      <span>
+        {{.Text | escapeHTML }}
+      </span>
+    {{else if eq .FragmentKind 1 2}}
+      <span class='parameter'>"{{.Text | escapeHTML }}"</span>
+    {{else if eq .FragmentKind 3}}
+      {{template "Modal" .}}
+    {{else if eq .FragmentKind 4}}
+      {{template "Modal" .}}
+    {{else if eq .FragmentKind 5}}
+      <div class='inline-table'>
+        <div>
+          {{template "table" .}}
+        </div>
+      </div>
+    {{end}}
+  {{end}}
+{{end}}
+
+{{define "table" }}
+  <table>
+    <tbody>
+      <tr>
+        {{range .Table.Headers}}
+          <th>{{. | escapeHTML }}
+          </th>
+        {{end}}
+      </tr>
+    </tbody>
+    <tbody>
+      {{range .Table.Rows}}
+        <tr>
+          {{range .Cells}}
+            <td>{{. | escapeHTML }}
+            </td>
+          {{end}}
+        </tr>
+      {{end}}
+    </tbody>
+  </table>
+{{end}}
+
+{{define "Modal"}}
+  <span class="modal-link">&lt;{{.Name | escapeHTML }}&gt;</span>
+  <div class="modal">
+    <h2 class="modal-title">{{ .FileName }}</h2>
+    <span class="close">×</span>
+    <div class="modal-content">
+      <pre>{{.Text}}</pre>
+    </div>
+  </div>
+{{end}}
+
+/* container for a Concept */
+{{define "concept"}}
+  <div class='step concept'>
+    {{template "stepMetaDiv" .ConceptStep}}
+    <i class="fa fa-plus-square" aria-hidden="true"></i>
+    {{template "stepBodyDiv" .ConceptStep}}
+  </li></ul></div></div>
+  <div class='concept-steps'>
+  {{range $index, $item := .Items}}
+    {{template "item" $item}}
+  {{end}}
+  </div>
+{{end}}

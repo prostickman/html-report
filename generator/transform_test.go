@@ -513,12 +513,14 @@ func TestToSidebar(t *testing.T) {
 }
 
 func TestToSpecHeader(t *testing.T) {
+	projectRoot = "/tmp/gauge"
 	want := &specHeader{
 		SpecName:      "specRes1",
 		ExecutionTime: "00:03:31",
 		FileName:      "/tmp/gauge/specs/foobar.spec",
 		Tags:          []string{"tag1", "tag2"},
 		Summary:       &summary{},
+		DirList:       []string{"../specs"},
 	}
 
 	got := toSpecHeader(spec1)
