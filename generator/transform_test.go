@@ -19,6 +19,7 @@ package generator
 
 import (
 	"encoding/base64"
+	"fmt"
 	"path/filepath"
 	"reflect"
 	"testing"
@@ -33,10 +34,11 @@ type transformTest struct {
 	output interface{}
 }
 
-func checkEqual(t *testing.T, test string, want, got interface{}) {
+func checkEqual(test string, want, got interface{}) error {
 	if diff := pretty.Compare(got, want); diff != "" {
-		t.Errorf("Test:%s\n diff: (-got +want)\n%s", test, diff)
+		return fmt.Errorf("Test:%s\n diff: (-got +want)\n%s", test, diff)
 	}
+	return nil
 }
 
 func newCommentItem(str string) *gm.ProtoItem {
@@ -240,9 +242,12 @@ var spec3 = &spec{
 }
 
 var datatableDrivenSpec = &gm.ProtoSpecResult{
-	Failed:        false,
-	Skipped:       false,
-	ExecutionTime: 211316,
+	Failed:               false,
+	Skipped:              false,
+	ExecutionTime:        211316,
+	ScenarioCount:        2,
+	ScenarioSkippedCount: 0,
+	ScenarioFailedCount:  1,
 	ProtoSpec: &gm.ProtoSpec{
 		SpecHeading:   "specRes1",
 		FileName:      "/tmp/gauge/specs/foobar.spec",
@@ -492,7 +497,10 @@ func TestToOverview(t *testing.T) {
 	}
 
 	got := toOverview(suiteRes1, "")
-	checkEqual(t, "", want, got)
+
+	if err := checkEqual("", want, got); err != nil {
+		t.Error(err)
+	}
 }
 
 func TestToSidebar(t *testing.T) {
@@ -520,11 +528,13 @@ func TestToSpecHeader(t *testing.T) {
 		FileName:      "/tmp/gauge/specs/foobar.spec",
 		Tags:          []string{"tag1", "tag2"},
 		Summary:       &summary{},
-		DirList:       []string{"../specs"},
+		DirList:       []string{filepath.Join("..", "specs")},
 	}
 
 	got := toSpecHeader(spec1)
-	checkEqual(t, "", want, got)
+	if err := checkEqual("", want, got); err != nil {
+		t.Error(err)
+	}
 }
 
 func TestToSpec(t *testing.T) {
@@ -546,7 +556,10 @@ func TestToSpec(t *testing.T) {
 	}
 
 	got := toSpec(specRes1)
-	checkEqual(t, "", want, got)
+	if err := checkEqual("", want, got); err != nil {
+		t.Error(err)
+	}
+
 }
 
 func TestToSpecWithScenariosInOrder(t *testing.T) {
@@ -618,7 +631,10 @@ func TestToSpecWithErrors(t *testing.T) {
 
 	got := toSpec(specRes)
 
-	checkEqual(t, "", want, got)
+	if err := checkEqual("", want, got); err != nil {
+		t.Error(err)
+	}
+
 }
 
 func TestToSpecForTableDrivenSpec(t *testing.T) {
@@ -678,11 +694,15 @@ func TestToSpecForTableDrivenSpec(t *testing.T) {
 		PassedScenarioCount:    1,
 		FailedScenarioCount:    1,
 		SkippedScenarioCount:   0,
+		ScenarioCount:          2,
 	}
 
 	got := toSpec(datatableDrivenSpec)
 
-	checkEqual(t, "", want, got)
+	if err := checkEqual("", want, got); err != nil {
+		t.Error(err)
+	}
+
 }
 
 func TestToSpecWithHookFailure(t *testing.T) {
@@ -699,7 +719,10 @@ func TestToSpecWithHookFailure(t *testing.T) {
 	}
 
 	got := toSpec(specResWithSpecHookFailure)
-	checkEqual(t, "", want, got)
+	if err := checkEqual("", want, got); err != nil {
+		t.Error(err)
+	}
+
 }
 
 func TestToSpecWithFileName(t *testing.T) {
@@ -724,7 +747,9 @@ func TestToSpecWithTags(t *testing.T) {
 	want := specRes1.GetProtoSpec().GetTags()
 	got := toSpec(specRes1).Tags
 
-	checkEqual(t, "", want, got)
+	if err := checkEqual("", want, got); err != nil {
+		t.Error(err)
+	}
 }
 
 func TestToSpecWithDataTableMapsCommentsBeforeDatatable(t *testing.T) {
@@ -738,7 +763,10 @@ func TestToSpecWithDataTableMapsCommentsBeforeDatatable(t *testing.T) {
 	}
 	got := toSpec(specRes1).CommentsBeforeDatatable
 
-	checkEqual(t, "", want, got)
+	if err := checkEqual("", want, got); err != nil {
+		t.Error(err)
+	}
+
 }
 
 func TestToSpecWithDataTableMapsCommentsAfterDatatable(t *testing.T) {
@@ -749,7 +777,10 @@ func TestToSpecWithDataTableMapsCommentsAfterDatatable(t *testing.T) {
 	}
 	got := toSpec(specRes1).CommentsAfterDatatable
 
-	checkEqual(t, "", want, got)
+	if err := checkEqual("", want, got); err != nil {
+		t.Error(err)
+	}
+
 }
 
 func TestToSpecWithDataTableIsTableDriven(t *testing.T) {
@@ -770,49 +801,66 @@ func TestToSpecWithDataTableHasDatatable(t *testing.T) {
 	}
 	got := toSpec(specRes1).Datatable
 
-	checkEqual(t, "", want, got)
+	if err := checkEqual("", want, got); err != nil {
+		t.Error(err)
+	}
+
 }
 
 func TestToSpecWithDataTableExecutionTime(t *testing.T) {
 	want := 211316
 	got := toSpec(specRes1).ExecutionTime
 
-	checkEqual(t, "", want, got)
+	if err := checkEqual("", want, got); err != nil {
+		t.Error(err)
+	}
+
 }
 
 func TestToSpecWithDataTableExecutionStatusPass(t *testing.T) {
 	want := pass
 	got := toSpec(specRes1).ExecutionStatus
 
-	checkEqual(t, "", want, got)
+	if err := checkEqual("", want, got); err != nil {
+		t.Error(err)
+	}
+
 }
 
 func TestToSpecWithDataTableExecutionStatusSkip(t *testing.T) {
 	want := skip
 	got := toSpec(&gm.ProtoSpecResult{Skipped: true, Failed: false}).ExecutionStatus
 
-	checkEqual(t, "", want, got)
+	if err := checkEqual("", want, got); err != nil {
+		t.Error(err)
+	}
 }
 
 func TestToSpecWithDataTableExecutionStatusFail(t *testing.T) {
 	want := fail
 	got := toSpec(&gm.ProtoSpecResult{Skipped: false, Failed: true}).ExecutionStatus
 
-	checkEqual(t, "", want, got)
+	if err := checkEqual("", want, got); err != nil {
+		t.Error(err)
+	}
 }
 
 func TestToSpecWithBeforeHookFailure(t *testing.T) {
 	want := []*hookFailure{{ErrMsg: "err", HookName: "Before Spec", Screenshot: "U2NyZWVuc2hvdA==", StackTrace: "Stacktrace"}}
 	got := toSpec(specResWithSpecHookFailure).BeforeSpecHookFailures
 
-	checkEqual(t, "", want, got)
+	if err := checkEqual("", want, got); err != nil {
+		t.Error(err)
+	}
 }
 
 func TestToSpecWithAfterHookFailure(t *testing.T) {
 	want := []*hookFailure{{ErrMsg: "err", HookName: "After Spec", Screenshot: "U2NyZWVuc2hvdA==", StackTrace: "Stacktrace", TableRowIndex: 0}}
 	got := toSpec(specResWithSpecHookFailure).AfterSpecHookFailures
 
-	checkEqual(t, "", want, got)
+	if err := checkEqual("", want, got); err != nil {
+		t.Error(err)
+	}
 }
 
 func TestToSpecWithScenarios(t *testing.T) {
@@ -860,43 +908,9 @@ func TestToSpecWithScenariosTableDriven(t *testing.T) {
 
 func TestToSpecWithScenarioStatusCounts(t *testing.T) {
 	got := toSpec(&gm.ProtoSpecResult{
-		ProtoSpec: &gm.ProtoSpec{
-			Items: []*gm.ProtoItem{
-				&gm.ProtoItem{
-					ItemType: gm.ProtoItem_TableDrivenScenario,
-					TableDrivenScenario: &gm.ProtoTableDrivenScenario{
-						Scenario: &gm.ProtoScenario{
-							ScenarioHeading: "Scenario 1",
-							ExecutionStatus: gm.ExecutionStatus_FAILED,
-							ScenarioItems:   []*gm.ProtoItem{newStepItem(true, false, []*gm.Fragment{newTextFragment("Step1")})},
-						},
-						TableRowIndex: int32(0),
-					},
-				},
-				&gm.ProtoItem{
-					ItemType: gm.ProtoItem_TableDrivenScenario,
-					TableDrivenScenario: &gm.ProtoTableDrivenScenario{
-						Scenario: &gm.ProtoScenario{
-							ScenarioHeading: "Scenario 1",
-							ExecutionStatus: gm.ExecutionStatus_SKIPPED,
-							ScenarioItems:   []*gm.ProtoItem{newStepItem(true, false, []*gm.Fragment{newTextFragment("Step1")})},
-						},
-						TableRowIndex: int32(0),
-					},
-				},
-				&gm.ProtoItem{
-					ItemType: gm.ProtoItem_TableDrivenScenario,
-					TableDrivenScenario: &gm.ProtoTableDrivenScenario{
-						Scenario: &gm.ProtoScenario{
-							ScenarioHeading: "Scenario 1",
-							ExecutionStatus: gm.ExecutionStatus_PASSED,
-							ScenarioItems:   []*gm.ProtoItem{newStepItem(false, false, []*gm.Fragment{newTextFragment("Step1")})},
-						},
-						TableRowIndex: int32(1),
-					},
-				},
-			},
-		},
+		ScenarioCount:        3,
+		ScenarioSkippedCount: 1,
+		ScenarioFailedCount:  1,
 	})
 
 	if got.PassedScenarioCount != 1 {
@@ -919,6 +933,7 @@ type summaryTest struct {
 var summaryTests = []*summaryTest{
 	{"All Passed",
 		&spec{
+			ScenarioCount:        2,
 			PassedScenarioCount:  2,
 			SkippedScenarioCount: 0,
 			FailedScenarioCount:  0,
@@ -927,6 +942,7 @@ var summaryTests = []*summaryTest{
 	},
 	{"With Skipped",
 		&spec{
+			ScenarioCount:        2,
 			PassedScenarioCount:  1,
 			SkippedScenarioCount: 1,
 			FailedScenarioCount:  0,
@@ -935,6 +951,7 @@ var summaryTests = []*summaryTest{
 	},
 	{"With failed",
 		&spec{
+			ScenarioCount:        2,
 			PassedScenarioCount:  1,
 			SkippedScenarioCount: 0,
 			FailedScenarioCount:  1,
@@ -943,6 +960,7 @@ var summaryTests = []*summaryTest{
 	},
 	{"With failed and skipped",
 		&spec{
+			ScenarioCount:        2,
 			PassedScenarioCount:  0,
 			SkippedScenarioCount: 1,
 			FailedScenarioCount:  1,
@@ -955,7 +973,9 @@ func TestToScenarioSummary(t *testing.T) {
 	for _, test := range summaryTests {
 		want := test.expected
 		got := *toScenarioSummary(test.result)
-		checkEqual(t, test.name, want, got)
+		if err := checkEqual(test.name, want, got); err != nil {
+			t.Error(err)
+		}
 	}
 }
 
@@ -1061,7 +1081,9 @@ func TestToScenarioWithHookFailures(t *testing.T) {
 	}
 
 	got := toScenario(scnWithHookFailure, -1)
-	checkEqual(t, "", want, got)
+	if err := checkEqual("", want, got); err != nil {
+		t.Error(err)
+	}
 }
 
 func TestToConcept(t *testing.T) {
@@ -1234,7 +1256,7 @@ func TestToHookFailure(t *testing.T) {
 }
 
 func TestToHookFailureWithNilInput(t *testing.T) {
-	var want *hookFailure = nil
+	var want *hookFailure
 	got := toHookFailure(nil, "foobar")
 
 	if got != want {
@@ -1249,13 +1271,13 @@ type specNameGenerationTest struct {
 }
 
 var specNameGenerationTests = []*specNameGenerationTest{
-	{filepath.Join("Users", "gauge", "foo", "simple_specification.spec"), filepath.Join("Users", "gauge", "foo"), "simple_specification.html"},
-	{filepath.Join("Users", "gauge", "foo", "simple_specification.spec"), filepath.Join("Users", "gauge"), filepath.Join("foo", "simple_specification.html")},
+	{filepath.Join("Users", "gauge", "foo", "simple_specification.spec"), filepath.ToSlash(filepath.Join("Users", "gauge", "foo")), "simple_specification.html"},
+	{filepath.Join("Users", "gauge", "foo", "simple_specification.spec"), filepath.ToSlash(filepath.Join("Users", "gauge")), filepath.ToSlash(filepath.Join("foo", "simple_specification.html"))},
 	{"simple_specification.spec", "", "simple_specification.html"},
-	{filepath.Join("Users", "gauge", "foo", "abcd1234.spec"), filepath.Join("Users", "gauge", "foo"), "abcd1234.html"},
-	{filepath.Join("Users", "gauge", "foo", "bar", "simple_specification.spec"), filepath.Join("Users", "gauge", "foo"), filepath.Join("bar", "simple_specification.html")},
-	{filepath.Join("Users", "gauge", "foo", "bar", "simple_specification.spec"), "Users", filepath.Join("gauge", "foo", "bar", "simple_specification.html")},
-	{filepath.Join("Users", "gauge12", "fo_o", "b###$ar", "simple_specification.spec"), "Users", filepath.Join("gauge12", "fo_o", "b###$ar", "simple_specification.html")},
+	{filepath.Join("Users", "gauge", "foo", "abcd1234.spec"), filepath.ToSlash(filepath.Join("Users", "gauge", "foo")), "abcd1234.html"},
+	{filepath.Join("Users", "gauge", "foo", "bar", "simple_specification.spec"), filepath.ToSlash(filepath.Join("Users", "gauge", "foo")), filepath.ToSlash(filepath.Join("bar", "simple_specification.html"))},
+	{filepath.Join("Users", "gauge", "foo", "bar", "simple_specification.spec"), "Users", filepath.ToSlash(filepath.Join("gauge", "foo", "bar", "simple_specification.html"))},
+	{filepath.Join("Users", "gauge12", "fo_o", "b###$ar", "simple_specification.spec"), "Users", filepath.ToSlash(filepath.Join("gauge12", "fo_o", "b###$ar", "simple_specification.html"))},
 }
 
 func TestToHTMLFileName(t *testing.T) {
@@ -1398,7 +1420,7 @@ func TestMapExecutionTimeToSuiteResult(t *testing.T) {
 	res := ToSuiteResult("", psr)
 
 	if res.ExecutionTime != 113163 {
-		t.Errorf("Expected ExecutionTime=113163; got %s", res.ExecutionTime)
+		t.Errorf("Expected ExecutionTime=113163; got %d", res.ExecutionTime)
 	}
 }
 
@@ -1414,13 +1436,13 @@ func TestSpecsCountToSuiteResult(t *testing.T) {
 	res := ToSuiteResult("", psr)
 
 	if res.PassedSpecsCount != 3 {
-		t.Errorf("Expected PassedSpecsCount=3; got %s\n", res.PassedSpecsCount)
+		t.Errorf("Expected PassedSpecsCount=3; got %d\n", res.PassedSpecsCount)
 	}
 	if res.SkippedSpecsCount != 1 {
-		t.Errorf("Expected SkippedSpecsCount=3; got %s\n", res.SkippedSpecsCount)
+		t.Errorf("Expected SkippedSpecsCount=3; got %d\n", res.SkippedSpecsCount)
 	}
 	if res.FailedSpecsCount != 2 {
-		t.Errorf("Expected FailedSpecsCount=3; got %s\n", res.FailedSpecsCount)
+		t.Errorf("Expected FailedSpecsCount=3; got %d\n", res.FailedSpecsCount)
 	}
 }
 
@@ -1509,7 +1531,7 @@ func TestToNestedSuiteResultMapsProjectName(t *testing.T) {
 	got := toNestedSuiteResult("some/path", sr)
 
 	if got.ProjectName != want {
-		t.Fatalf("Expected ProjectName=%s, got %s", want, got)
+		t.Fatalf("Expected ProjectName=%v, got %v", want, got)
 	}
 }
 
@@ -1520,7 +1542,7 @@ func TestToNestedSuiteResultMapsTimeStamp(t *testing.T) {
 	got := toNestedSuiteResult("some/path", sr)
 
 	if got.Timestamp != want {
-		t.Fatalf("Expected TimeStamp=%s, got %s", want, got)
+		t.Fatalf("Expected TimeStamp=%v, got %v", want, got)
 	}
 }
 
@@ -1531,7 +1553,7 @@ func TestToNestedSuiteResultMapsEnvironment(t *testing.T) {
 	got := toNestedSuiteResult("some/path", sr)
 
 	if got.Environment != want {
-		t.Fatalf("Expected Environment=%s, got %s", want, got)
+		t.Fatalf("Expected Environment=%v, got %v", want, got)
 	}
 }
 
@@ -1557,7 +1579,7 @@ func TestToNestedSuiteResultMapsBeforeSuiteHookFailure(t *testing.T) {
 	}
 
 	if got.BeforeSuiteHookFailure.HookName != want {
-		t.Fatalf("expected BeforeSuiteHookFailure to have HookName = %s, got %s", want, got)
+		t.Fatalf("expected BeforeSuiteHookFailure to have HookName = %v, got %v", want, got)
 	}
 }
 
@@ -1572,7 +1594,7 @@ func TestToNestedSuiteResultMapsAfterSuiteHookFailure(t *testing.T) {
 	}
 
 	if got.AfterSuiteHookFailure.HookName != want {
-		t.Fatalf("expected AfterSuiteHookFailure to have HookName = %s, got %s", want, got)
+		t.Fatalf("expected AfterSuiteHookFailure to have HookName = %v, got %v", want, got)
 	}
 }
 
@@ -1670,5 +1692,7 @@ func TestToNestedSuiteResultMapsSpecResults(t *testing.T) {
 		&barSpec,
 	}
 
-	checkEqual(t, "", want, got.SpecResults)
+	if err := checkEqual("", want, got.SpecResults); err != nil {
+		t.Error(err)
+	}
 }

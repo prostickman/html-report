@@ -292,6 +292,7 @@ var scenarioWithStepFail = &gm.ProtoScenario{
 }
 
 var passSpecRes1 = &gm.ProtoSpecResult{
+	ScenarioCount: 2,
 	Failed:        false,
 	Skipped:       false,
 	ExecutionTime: 211316,
@@ -342,9 +343,11 @@ var passSpecRes3 = &gm.ProtoSpecResult{
 }
 
 var failSpecResWithAfterScenarioFailure = &gm.ProtoSpecResult{
-	Failed:        true,
-	Skipped:       false,
-	ExecutionTime: 211316,
+	ScenarioCount:       1,
+	ScenarioFailedCount: 1,
+	Failed:              true,
+	Skipped:             false,
+	ExecutionTime:       211316,
 	ProtoSpec: &gm.ProtoSpec{
 		SpecHeading: "Failing Specification 1",
 		Tags:        []string{},
@@ -356,9 +359,11 @@ var failSpecResWithAfterScenarioFailure = &gm.ProtoSpecResult{
 }
 
 var failSpecResWithBeforeScenarioFailure = &gm.ProtoSpecResult{
-	Failed:        true,
-	Skipped:       false,
-	ExecutionTime: 211316,
+	ScenarioCount:       1,
+	ScenarioFailedCount: 1,
+	Failed:              true,
+	Skipped:             false,
+	ExecutionTime:       211316,
 	ProtoSpec: &gm.ProtoSpec{
 		SpecHeading: "Failing Specification 1",
 		Tags:        []string{},
@@ -370,9 +375,11 @@ var failSpecResWithBeforeScenarioFailure = &gm.ProtoSpecResult{
 }
 
 var failSpecResWithBeforeAndAfterScenarioFailure = &gm.ProtoSpecResult{
-	Failed:        true,
-	Skipped:       false,
-	ExecutionTime: 211316,
+	ScenarioCount:       1,
+	ScenarioFailedCount: 1,
+	Failed:              true,
+	Skipped:             false,
+	ExecutionTime:       211316,
 	ProtoSpec: &gm.ProtoSpec{
 		SpecHeading: "Failing Specification 1",
 		Tags:        []string{},
@@ -384,9 +391,11 @@ var failSpecResWithBeforeAndAfterScenarioFailure = &gm.ProtoSpecResult{
 }
 
 var specResWithMultipleScenarios = &gm.ProtoSpecResult{
-	Failed:        true,
-	Skipped:       false,
-	ExecutionTime: 211316,
+	ScenarioCount:       2,
+	ScenarioFailedCount: 1,
+	Failed:              true,
+	Skipped:             false,
+	ExecutionTime:       211316,
 	ProtoSpec: &gm.ProtoSpec{
 		SpecHeading: "Failing Specification 1",
 		Tags:        []string{},
@@ -399,9 +408,11 @@ var specResWithMultipleScenarios = &gm.ProtoSpecResult{
 }
 
 var failSpecResWithBeforeStepFailure = &gm.ProtoSpecResult{
-	Failed:        true,
-	Skipped:       false,
-	ExecutionTime: 211316,
+	ScenarioCount:       1,
+	ScenarioFailedCount: 1,
+	Failed:              true,
+	Skipped:             false,
+	ExecutionTime:       211316,
 	ProtoSpec: &gm.ProtoSpec{
 		SpecHeading: "Failing Specification 1",
 		Tags:        []string{},
@@ -413,9 +424,11 @@ var failSpecResWithBeforeStepFailure = &gm.ProtoSpecResult{
 }
 
 var failSpecResWithAfterStepFailure = &gm.ProtoSpecResult{
-	Failed:        true,
-	Skipped:       false,
-	ExecutionTime: 211316,
+	ScenarioCount:       1,
+	ScenarioFailedCount: 1,
+	Failed:              true,
+	Skipped:             false,
+	ExecutionTime:       211316,
 	ProtoSpec: &gm.ProtoSpec{
 		SpecHeading: "Failing Specification 1",
 		Tags:        []string{},
@@ -427,9 +440,11 @@ var failSpecResWithAfterStepFailure = &gm.ProtoSpecResult{
 }
 
 var failSpecResWithBeforeAndAfterStepFailure = &gm.ProtoSpecResult{
-	Failed:        true,
-	Skipped:       false,
-	ExecutionTime: 211316,
+	ScenarioCount:       1,
+	ScenarioFailedCount: 1,
+	Failed:              true,
+	Skipped:             false,
+	ExecutionTime:       211316,
 	ProtoSpec: &gm.ProtoSpec{
 		SpecHeading: "Failing Specification 1",
 		Tags:        []string{},
@@ -441,9 +456,11 @@ var failSpecResWithBeforeAndAfterStepFailure = &gm.ProtoSpecResult{
 }
 
 var failSpecResWithStepFailure = &gm.ProtoSpecResult{
-	Failed:        true,
-	Skipped:       false,
-	ExecutionTime: 211316,
+	ScenarioCount:       1,
+	ScenarioFailedCount: 1,
+	Failed:              true,
+	Skipped:             false,
+	ExecutionTime:       211316,
 	ProtoSpec: &gm.ProtoSpec{
 		SpecHeading: "Failing Specification 1",
 		Tags:        []string{},
@@ -455,9 +472,11 @@ var failSpecResWithStepFailure = &gm.ProtoSpecResult{
 }
 
 var failSpecResWithConceptFailure = &gm.ProtoSpecResult{
-	Failed:        true,
-	Skipped:       false,
-	ExecutionTime: 211316,
+	ScenarioCount:       1,
+	ScenarioFailedCount: 1,
+	Failed:              true,
+	Skipped:             false,
+	ExecutionTime:       211316,
 	ProtoSpec: &gm.ProtoSpec{
 		SpecHeading: "Failing Specification",
 		Tags:        []string{},
@@ -469,9 +488,11 @@ var failSpecResWithConceptFailure = &gm.ProtoSpecResult{
 }
 
 var skippedSpecRes = &gm.ProtoSpecResult{
-	Failed:        false,
-	Skipped:       true,
-	ExecutionTime: 0,
+	ScenarioCount:        1,
+	ScenarioSkippedCount: 1,
+	Failed:               false,
+	Skipped:              true,
+	ExecutionTime:        0,
 	ProtoSpec: &gm.ProtoSpec{
 		SpecHeading: "Skipped Specification",
 		Tags:        []string{},
@@ -483,13 +504,14 @@ var skippedSpecRes = &gm.ProtoSpecResult{
 }
 
 var nestedSpecRes = &gm.ProtoSpecResult{
+	ScenarioCount: 1,
 	Failed:        false,
 	Skipped:       true,
 	ExecutionTime: 0,
 	ProtoSpec: &gm.ProtoSpec{
 		SpecHeading: "Nested Specification",
 		Tags:        []string{},
-		FileName:    filepath.Join("nested", "nested_specification.spec"),
+		FileName:    filepath.ToSlash(filepath.Join("nested", "nested_specification.spec")),
 		Items: []*gm.ProtoItem{
 			newScenarioItem(scenario2),
 		},
@@ -497,6 +519,7 @@ var nestedSpecRes = &gm.ProtoSpecResult{
 }
 
 var failSpecResWithAfterSpecFailure = &gm.ProtoSpecResult{
+	ScenarioCount: 1,
 	Failed:        true,
 	Skipped:       false,
 	ExecutionTime: 211316,
@@ -529,6 +552,7 @@ var failSpecResWithAfterSpecFailure = &gm.ProtoSpecResult{
 }
 
 var failSpecResWithBeforeSpecFailure = &gm.ProtoSpecResult{
+	ScenarioCount: 1,
 	Failed:        true,
 	Skipped:       false,
 	ExecutionTime: 211316,
@@ -557,6 +581,7 @@ var failSpecResWithBeforeSpecFailure = &gm.ProtoSpecResult{
 }
 
 var failSpecResWithBeforeSpecFailureWithTableDriven = &gm.ProtoSpecResult{
+	ScenarioCount: 2,
 	Failed:        true,
 	Skipped:       false,
 	ExecutionTime: 211316,
@@ -601,6 +626,7 @@ var failSpecResWithBeforeSpecFailureWithTableDriven = &gm.ProtoSpecResult{
 }
 
 var failSpecResWithAfterSpecFailureWithTableDriven = &gm.ProtoSpecResult{
+	ScenarioCount: 2,
 	Failed:        true,
 	Skipped:       false,
 	ExecutionTime: 211316,
@@ -645,6 +671,7 @@ var failSpecResWithAfterSpecFailureWithTableDriven = &gm.ProtoSpecResult{
 }
 
 var failSpecResWithBeforeAfterSpecFailure = &gm.ProtoSpecResult{
+	ScenarioCount: 1,
 	Failed:        true,
 	Skipped:       false,
 	ExecutionTime: 211316,

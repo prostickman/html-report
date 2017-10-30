@@ -12,7 +12,7 @@ import (
 var templateBasePath, _ = filepath.Abs(filepath.Join("..", "themes", "default"))
 
 func TestEndToEndHTMLGenerationFromSavedResult(t *testing.T) {
-	expectedFiles := []string{"index.html", "example.html", "js/search_index.js"}
+	expectedFiles := []string{"index.html", "example.html", filepath.Join("js", "search_index.js")}
 	reportDir := filepath.Join("_testdata", "e2e")
 	inputFile := filepath.Join("_testdata", "last_run_result")
 

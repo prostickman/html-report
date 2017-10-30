@@ -187,7 +187,7 @@
     <header class="curr-spec">
       <div class="spec-head-wrapper">
         <h3 class="spec-head" title="{{.FileName}}">{{.SpecName | escapeHTML }}</h3>
-        <div class="report_test-results" alt="Scenarios" title="Scenarios">
+        <div class="hidden report_test-results" alt="Scenarios" title="Scenarios">
           <ul>
             <li class="fail"><span class="value">{{.Summary.Failed}}</span><span class="txt">Failed</span></li>
             <li class="pass"><span class="value">{{.Summary.Passed}}</span><span class="txt">Passed</span></li>
@@ -513,32 +513,22 @@
 	{{$overview := (toOverview . "")}}
 	{{template "htmlPageStartTag" $overview}}
 	{{template "reportOverviewTag" $overview}}
+	{{if .BeforeSuiteHookFailure}}
+    {{template "hookFailureDiv" .BeforeSuiteHookFailure}}
+  {{end}}
 	{{if .AfterSuiteHookFailure}}
 		{{template "hookFailureDiv" .AfterSuiteHookFailure}}
 	{{end}}
-  <div class="specifications">
-  {{template "sidebarDiv" (toSidebar . "")}}
-	{{if ne .ExecutionStatus "fail" }}
-    <div class="congratulations details">
-      <p>Congratulations! You've gone all <span class="green">green</span> and saved the environment!</p>
+  {{if not .BeforeSuiteHookFailure}}
+    <div class="specifications">
+    {{template "sidebarDiv" (toSidebar . "")}}
+    {{if ne .ExecutionStatus "fail" }}
+      <div class="congratulations details">
+        <p>Congratulations! You've gone all <span class="green">green</span> and saved the environment!</p>
+      </div>
+    {{end}}
     </div>
-	{{end}}
- 	</div>
- 	</div>
-	</main>
-	{{template "bodyFooterTag"}}
-	{{template "htmlPageEndWithJS" $overview}}
-{{end}}
-
-/* holds definition to render an index page with before suite hook failure */
-{{define "indexPageFailure"}}
-	{{$overview := (toOverview . "")}}
-	{{template "htmlPageStartTag" $overview}}
-	{{template "reportOverviewTag" $overview}}
-  {{template "hookFailureDiv" .BeforeSuiteHookFailure}}
-	{{if .AfterSuiteHookFailure}}
-		{{template "hookFailureDiv" .AfterSuiteHookFailure}}
-	{{end}}
+  {{end}}
  	</div>
 	</main>
 	{{template "bodyFooterTag"}}

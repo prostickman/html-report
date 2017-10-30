@@ -45,15 +45,15 @@ type summary struct {
 }
 
 type overview struct {
-	ProjectName   string
-	Env           string
-	Tags          string
-	SuccessRate   float32
-	ExecutionTime string
-	Timestamp     string
-	Summary       *summary
+	ProjectName     string
+	Env             string
+	Tags            string
+	SuccessRate     float32
+	ExecutionTime   string
+	Timestamp       string
+	Summary         *summary
 	ExecutionStatus status
-	BasePath      string
+	BasePath        string
 }
 
 type specsMeta struct {
@@ -267,7 +267,7 @@ func readTemplates(themePath string) {
 		"toSpecHeader":        toSpecHeader,
 		"toSidebar":           toSidebar,
 		"toOverview":          toOverview,
-		"toPath":              path.Join,
+		"toPath":              func(elems ...string) string { return filepath.ToSlash(filepath.Clean(path.Join(elems...))) },
 		"getDirName":          filepath.Base,
 	}
 	var err error
@@ -432,9 +432,8 @@ func generateIndexPages(suiteRes *SuiteResult, reportsDir string, wg *sync.WaitG
 			if _, ok := dirs[d]; !ok {
 				dirs[d] = 1
 			}
-			basePath = filepath.Join(basePath, d)
+			basePath = filepath.ToSlash(filepath.Join(basePath, d))
 		}
-
 	}
 	delete(dirs, ".")
 	for d := range dirs {

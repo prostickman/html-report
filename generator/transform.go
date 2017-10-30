@@ -147,21 +147,21 @@ func toOverview(res *SuiteResult, filePath string) *overview {
 	base := ""
 	if filePath != "" {
 		base, _ = filepath.Rel(filepath.Dir(filePath), projectRoot)
-		base = path.Join(base, "/")
+		base = path.Join(filepath.ToSlash(filepath.Clean(base)), "/")
 	} else if res.BasePath != "" {
 		base, _ = filepath.Rel(filepath.Join(projectRoot, res.BasePath), projectRoot)
-		base = path.Join(base, "/")
+		base = path.Join(filepath.ToSlash(filepath.Clean(base)), "/")
 	}
 	return &overview{
-		ProjectName:   res.ProjectName,
-		Env:           res.Environment,
-		Tags:          res.Tags,
-		SuccessRate:   res.SuccessRate,
-		ExecutionTime: formatTime(res.ExecutionTime),
-		Timestamp:     res.Timestamp,
-		Summary:       &summary{Failed: res.FailedSpecsCount, Total: totalSpecs, Passed: res.PassedSpecsCount, Skipped: res.SkippedSpecsCount},
+		ProjectName:     res.ProjectName,
+		Env:             res.Environment,
+		Tags:            res.Tags,
+		SuccessRate:     res.SuccessRate,
+		ExecutionTime:   formatTime(res.ExecutionTime),
+		Timestamp:       res.Timestamp,
+		Summary:         &summary{Failed: res.FailedSpecsCount, Total: totalSpecs, Passed: res.PassedSpecsCount, Skipped: res.SkippedSpecsCount},
 		ExecutionStatus: res.ExecutionStatus,
-		BasePath:      base,
+		BasePath:        base,
 	}
 }
 
@@ -184,9 +184,8 @@ func toHTMLFileName(specName, basePath string) string {
 	if err != nil {
 		specPath = filepath.Join(basePath, filepath.Base(specName))
 	}
-	// specPath = strings.Replace(specPath, string(filepath.Separator), "_", -1)
 	ext := filepath.Ext(specPath)
-	return strings.TrimSuffix(specPath, ext) + dothtml
+	return filepath.ToSlash(strings.TrimSuffix(specPath, ext) + dothtml)
 }
 
 func getFilePathBasedOnSpecLocation(specFilePath, path string) string {
@@ -401,8 +400,11 @@ func SetRowFailures(failures []*hookFailure, spec *spec) {
 }
 
 func toScenarioSummary(s *spec) *summary {
-	var sum = summary{Failed: s.FailedScenarioCount, Passed: s.PassedScenarioCount, Skipped: s.SkippedScenarioCount, Total:s.ScenarioCount}
-	return &sum
+	return &summary{
+		Failed:  s.FailedScenarioCount,
+		Passed:  s.PassedScenarioCount,
+		Skipped: s.SkippedScenarioCount,
+		Total:   s.ScenarioCount}
 }
 
 func toScenario(scn *gm.ProtoScenario, tableRowIndex int) *scenario {
