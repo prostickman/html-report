@@ -4,3 +4,4 @@ deploy
 bin
 *.iml
 .DS_Store
+regenerate/_testdata/e2e

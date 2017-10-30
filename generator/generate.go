@@ -314,7 +314,11 @@ func GenerateReports(res *SuiteResult, reportsDir, themePath string) error {
 		}
 		specRes := res.SpecResults
 		for _, r := range specRes {
-			relPath, _ := filepath.Rel(projectRoot, r.FileName)
+			fmt.Println("generating spec " + r.FileName)
+			relPath, err := filepath.Rel(projectRoot, r.FileName)
+			if err != nil {
+				return err
+			}
 			env.CreateDirectory(filepath.Join(reportsDir, filepath.Dir(relPath)))
 			sf, err := os.Create(filepath.Join(reportsDir, toHTMLFileName(r.FileName, projectRoot)))
 			if err != nil {
