@@ -46,8 +46,8 @@ func TestEndToEndHTMLGenerationFromSavedResult(t *testing.T) {
 		if err != nil {
 			t.Errorf("Error reading expected HTML file: %s", err.Error())
 		}
-		got := string(gotContent)
-		want := string(wantContent)
+		got := helper.RemoveNewline(string(gotContent))
+		want := helper.RemoveNewline(string(wantContent))
 		helper.AssertEqual(want, got, expectedFile, t)
 	}
 	cleanUp(t, reportDir)
