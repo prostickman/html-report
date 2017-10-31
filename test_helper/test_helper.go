@@ -19,10 +19,13 @@ package testHelper
 
 import (
 	"fmt"
+	"html"
+	"io/ioutil"
+	"os"
 	"regexp"
 	"testing"
 
-	"github.com/kylelemons/godebug/pretty"
+	htmldiff "github.com/documize/html-diff"
 )
 
 var re = regexp.MustCompile("[\\s]*[\n\t][\\s]*")
@@ -33,15 +36,34 @@ func RemoveNewline(s string) string {
 
 func AssertEqual(expected, actual, testName string, t *testing.T) {
 	if expected != actual {
-		if err := CheckEqual(testName, expected, actual); err!=nil {
-			t.Error(err)
+		diffHTML := compare(expected, actual)
+		tmpFile, err := ioutil.TempFile("", "")
+		if err != nil {
+			t.Errorf("Unable to dump to tmp file. Raw content:\n%s\n", diffHTML)
 		}
+		fileName := fmt.Sprintf("%s.html", tmpFile.Name())
+		ioutil.WriteFile(fileName, []byte(diffHTML), 0644)
+		tmpFile.Close()
+		t.Errorf("%s -  View Diff Output : %s\n", testName, fileName)
 	}
 }
 
-func CheckEqual(test string, want, got interface{}) error {
-	if diff := pretty.Compare(got, want); diff != "" {
-		return fmt.Errorf("Test:%s\n diff: (-got +want)\n%s", test, diff)
+func compare(a, b string) string {
+	var cfg = &htmldiff.Config{
+		InsertedSpan: []htmldiff.Attribute{{Key: "style", Val: "background-color: palegreen;"}},
+		DeletedSpan:  []htmldiff.Attribute{{Key: "style", Val: "background-color: lightpink;"}},
+		ReplacedSpan: []htmldiff.Attribute{{Key: "style", Val: "background-color: lightskyblue;"}},
+		CleanTags:    []string{""},
 	}
-	return nil
+
+	res, _ := cfg.HTMLdiff([]string{html.EscapeString(a), html.EscapeString(b)})
+	return res[0]
+}
+
+func FileExists(path string) bool {
+	_, err := os.Stat(path)
+	if err == nil {
+		return true
+	}
+	return !os.IsNotExist(err)
 }
