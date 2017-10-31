@@ -15,13 +15,14 @@
 // You should have received a copy of the GNU General Public License
 // along with getgauge/html-report.  If not, see <http://www.gnu.org/licenses/>.
 
+// +build windows
+
 package regenerate
 
 import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
-	"runtime"
 	"testing"
 
 	helper "github.com/getgauge/html-report/test_helper"
@@ -31,12 +32,9 @@ var templateBasePath, _ = filepath.Abs(filepath.Join("..", "themes", "default"))
 
 func TestEndToEndHTMLGenerationFromSavedResult(t *testing.T) {
 	expectedFiles := []string{"index.html", filepath.Join("specs", "example.html"), filepath.Join("js", "search_index.js")}
-	reportDir := filepath.Join("_testdata", "e2e")
+	reportDir := filepath.Join("_testdata", "windows", "e2e")
 
-	inputFile := filepath.Join("_testdata", "last_run_result")
-	if runtime.GOOS == "windows" {
-		inputFile = filepath.Join("_testdata", "last_run_result_windows")
-	}
+	inputFile := filepath.Join("_testdata", "windows", "last_run_result")
 
 	Report(inputFile, reportDir, templateBasePath, "c:\\Temp\\foo")
 	for _, expectedFile := range expectedFiles {
@@ -44,7 +42,7 @@ func TestEndToEndHTMLGenerationFromSavedResult(t *testing.T) {
 		if err != nil {
 			t.Errorf("Error reading generated HTML file: %s", err.Error())
 		}
-		wantContent, err := ioutil.ReadFile(filepath.Join("_testdata", "expectedE2E", "simpleSuiteRes", expectedFile))
+		wantContent, err := ioutil.ReadFile(filepath.Join("_testdata", "windows", "expectedE2E", "simpleSuiteRes", expectedFile))
 		if err != nil {
 			t.Errorf("Error reading expected HTML file: %s", err.Error())
 		}
