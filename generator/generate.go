@@ -276,6 +276,8 @@ func readTemplates(themePath string) {
 		"toSidebar":           toSidebar,
 		"toOverview":          toOverview,
 		"toPath":              path.Join,
+		"hasPrefix":           strings.HasPrefix,
+		"contains":            strings.Contains,
 	}
 	f, err := ioutil.ReadFile(filepath.Join(getAbsThemePath(themePath), "views", "partials.tmpl"))
 	if err != nil {
