@@ -355,11 +355,17 @@
   <div class="error-container failed">
     <div class="exception-container">
         <div class="exception">
+	{{if (contains .ErrorMessage "GaugeDbfitException")}}
+          <div class="org-msg">{{.ErrorMessage | encodeNewLine }} </div>
+        {{else}}
           <h4 class="error-message">
             <pre>{{.ErrorMessage | escapeHTML | encodeNewLine}}</pre>
           </h4>
           <pre class="stacktrace">{{.StackTrace | escapeHTML | encodeNewLine}}</pre>
         </div>
+	{{end}} 
+	
+	
         {{if .Screenshot}}<div class="screenshot-container">
           <a href="data:image/png;base64,{{.Screenshot}}" rel="lightbox">
             <img src="data:image/png;base64,{{.Screenshot}}" class="screenshot-thumbnail" />
